@@ -11,3 +11,20 @@
   padding: 0;
   box-sizing: border-box;
 }
+
+input {
+  height: 45px !important;
+  border-radius: 2px !important;
+  box-shadow: none !important;
+  border: 1px solid #000 !important;
+}
+
+button {
+  height: 45px !important;
+  border-radius: 2px !important;
+  box-shadow: none !important;
+}
+
+.cl-cardBox {
+  box-shadow: none !important;
+}
