@@ -1,10 +1,12 @@
 import React from "react";
 import { UserButton } from "@clerk/nextjs";
 import { currentUser } from "@clerk/nextjs/server";
+import { getCurrentUserDataFromMongoDB } from "@/server-actions/users";
 
 async function VehiclesPage() {
   const userData = await currentUser();
-  console.log(userData);
+  const mongoUserResponse = await getCurrentUserDataFromMongoDB();
+  console.log(mongoUserResponse);
   return (
     <div className="p-10">
       <h1>Vehicles</h1>
