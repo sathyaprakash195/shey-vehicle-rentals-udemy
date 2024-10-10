@@ -13,6 +13,9 @@ function ThemeProvider({ children }: { children: React.ReactNode }) {
         components: {
           Button: {
             controlHeight: 45,
+            defaultBg :'#DDDDDD',
+            defaultActiveBg :'#DDDDDD',
+            defaultHoverBg :'#DDDDDD',
           },
           Input: {
             controlHeight: 45,

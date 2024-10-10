@@ -11,10 +11,12 @@
   "dependencies": {
     "@clerk/nextjs": "^5.7.1",
     "antd": "^5.21.2",
+    "lucide-react": "^0.451.0",
     "mongoose": "^8.7.0",
     "next": "14.2.14",
     "react": "^18",
-    "react-dom": "^18"
+    "react-dom": "^18",
+    "zustand": "^5.0.0-rc.2"
   },
   "devDependencies": {
     "@types/node": "^20",

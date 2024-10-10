@@ -27,7 +27,7 @@ function Header({
 
       <div className="flex gap-5 items-center">
         {menuItems.map((item, index) => (
-          <span key={index} className="text-white">
+          <span key={index} className="text-white text-sm">
             {item.name}
           </span>
         ))}
