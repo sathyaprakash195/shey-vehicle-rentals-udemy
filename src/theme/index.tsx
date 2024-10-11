@@ -22,6 +22,7 @@ function ThemeProvider({ children }: { children: React.ReactNode }) {
           },
           Select: {
             controlHeight: 45,
+            colorBorder: '#000',
           },
         },
       }}

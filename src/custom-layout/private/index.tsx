@@ -64,7 +64,9 @@ function PrivateLayout({ children }: { children: React.ReactNode }) {
 
       {showMenuItems && loggedinUserData && (
         <Drawer open={showMenuItems} onClose={() => setShowMenuItems(false)}>
-          <MenuItems loggedinUserData={loggedinUserData} />
+          <MenuItems loggedinUserData={loggedinUserData} 
+           setShowMenuItems={setShowMenuItems}
+          />
         </Drawer>
       )}
     </div>

@@ -28,3 +28,11 @@ button {
 .cl-cardBox {
   box-shadow: none !important;
 }
+
+.ant-form-item {
+  margin-bottom: 0 !important;
+}
+
+.ant-form-item-label {
+  padding: 0 !important;
+}

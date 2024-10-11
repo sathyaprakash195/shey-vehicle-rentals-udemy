@@ -15,9 +15,10 @@ import React from "react";
 
 interface IMenuItems {
   loggedinUserData: IUser;
+  setShowMenuItems: (value: boolean) => void;
 }
 
-function MenuItems({ loggedinUserData }: IMenuItems) {
+function MenuItems({ loggedinUserData , setShowMenuItems }: IMenuItems) {
   const iconSize = 16;
   const pathname = usePathname();
   const router = useRouter();
@@ -99,7 +100,7 @@ function MenuItems({ loggedinUserData }: IMenuItems) {
     : userMenuItems;
 
   return (
-    <div className="flex flex-col gap-10">
+    <div className="flex flex-col gap-7">
       {menuItemsToRender.map((item, index) => (
         <div
           key={index}
@@ -107,6 +108,10 @@ function MenuItems({ loggedinUserData }: IMenuItems) {
             pathname === item.path &&
             "border border-solid border-black bg-gray-200"
           }`}
+          onClick={() => {
+            router.push(item.path);
+            setShowMenuItems(false);
+          }}
         >
           {item.icon}
           <span className="text-sm">{item.name}</span>
