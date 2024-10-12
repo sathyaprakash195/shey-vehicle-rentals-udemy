@@ -20,7 +20,6 @@ input {
 }
 
 button {
-  height: 45px !important;
   border-radius: 2px !important;
   box-shadow: none !important;
 }
@@ -35,4 +34,9 @@ button {
 
 .ant-form-item-label {
   padding: 0 !important;
+}
+
+table {
+  border: 1px solid #aaaaaa !important;
+  margin-top: 20px;
 }
