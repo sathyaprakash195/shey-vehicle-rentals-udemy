@@ -17,7 +17,7 @@ export interface IVehicle {
     brand : string;
     model : string;
     rentPerHour : number;
-    media : string;
+    media : string[];
     isActive : boolean;
     status : string;
     createdAt : string;

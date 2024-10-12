@@ -4,7 +4,6 @@ import { IVehicle } from "@/interfaces";
 import VehicleModel from "@/models/vehicle-model";
 import { revalidatePath } from "next/cache";
 
-
 export const addVehicle = async (payload: Partial<IVehicle>) => {
   try {
     await VehicleModel.create(payload);
@@ -21,9 +20,24 @@ export const addVehicle = async (payload: Partial<IVehicle>) => {
   }
 };
 
-export const getAllVehicles = async () => {
+export const getAllVehicles = async (filters: any) => {
   try {
-    const vehicles = await VehicleModel.find().sort({ createdAt: -1 });
+    let query = {};
+    if (filters.category) {
+      query = { category: filters.category };
+    }
+
+    let sortBy: any = { createdAt: -1 };
+
+    if (filters.sortBy) {
+      if (filters.sortBy === "rentPerHour:asc") {
+        sortBy = { rentPerHour: 1 };
+      } else {
+        sortBy = { rentPerHour: -1 };
+      }
+    }
+
+    const vehicles = await VehicleModel.find(query).sort(sortBy);
 
     return {
       success: true,
@@ -95,4 +109,4 @@ export const deleteVehicleById = async (id: string) => {
       message: error.message,
     };
   }
-}
+};

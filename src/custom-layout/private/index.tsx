@@ -6,11 +6,13 @@ import React, { useEffect } from "react";
 import MenuItems from "./menu-items";
 import { IUsersGlobalStore, usersGlobalStore } from "@/store/users-store";
 import Spinner from "@/components/spinner";
+import { useRouter } from "next/navigation";
 
 function PrivateLayout({ children }: { children: React.ReactNode }) {
   const [error, setError] = React.useState(null);
   const [loading, setLoading] = React.useState(false);
   const [showMenuItems, setShowMenuItems] = React.useState(false);
+  const router = useRouter();
   const { loggedinUserData, setLoggedinUserData } =
     usersGlobalStore() as IUsersGlobalStore;
   const getData = async () => {
@@ -37,7 +39,7 @@ function PrivateLayout({ children }: { children: React.ReactNode }) {
     // text will be replaced with a spinner (todo item)
     return (
       <div className="flex justify-center items-center h-screen">
-         <Spinner />
+        <Spinner />
       </div>
     );
   }
@@ -49,7 +51,11 @@ function PrivateLayout({ children }: { children: React.ReactNode }) {
   return (
     <div>
       <div className="flex justify-between items-center bg-primary p-5">
-        <img src="/logo.png" className="h-14 w-20" />
+        <img
+          src="/logo.png"
+          className="h-14 w-20 cursor-pointer"
+          onClick={() => router.push("/vehicles")}
+        />
         <div className="flex gap-5 text-white text-sm">
           <span>{loggedinUserData?.name}</span>
 
@@ -64,8 +70,9 @@ function PrivateLayout({ children }: { children: React.ReactNode }) {
 
       {showMenuItems && loggedinUserData && (
         <Drawer open={showMenuItems} onClose={() => setShowMenuItems(false)}>
-          <MenuItems loggedinUserData={loggedinUserData} 
-           setShowMenuItems={setShowMenuItems}
+          <MenuItems
+            loggedinUserData={loggedinUserData}
+            setShowMenuItems={setShowMenuItems}
           />
         </Drawer>
       )}
