@@ -1,7 +1,10 @@
 "use client";
 import { getDateTimeFormat } from "@/helpers/date-time-formats";
 import { IVehicle } from "@/interfaces";
-import { checkVehicleAvailabilty } from "@/server-actions/bookings";
+import {
+  checkVehicleAvailabilty,
+  saveNewBooking,
+} from "@/server-actions/bookings";
 import { getStripePaymentIntent } from "@/server-actions/payments";
 import { Button, Input, message } from "antd";
 import { Elements } from "@stripe/react-stripe-js";
@@ -9,6 +12,8 @@ import { loadStripe } from "@stripe/stripe-js";
 import dayjs from "dayjs";
 import React from "react";
 import CreditCardForm from "./credit-card-form";
+import { IUsersGlobalStore, usersGlobalStore } from "@/store/users-store";
+import { useRouter } from "next/navigation";
 
 const stripePromise = loadStripe(
   process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY || ""
@@ -22,6 +27,8 @@ function VehicleInfo({ vehicle }: { vehicle: IVehicle }) {
   const [paymentIntentId, setPaymentIntentId] = React.useState<string>("");
   const [openCreditCardForm, setOpenCreditCardForm] =
     React.useState<boolean>(false);
+  const { loggedinUserData } = usersGlobalStore() as IUsersGlobalStore;
+  const router = useRouter();
 
   const totalHours = dayjs(toDateAndTime).diff(dayjs(fromDateAndTime), "hour");
   const totalAmount = totalHours * vehicle.rentPerHour;
@@ -73,15 +80,31 @@ function VehicleInfo({ vehicle }: { vehicle: IVehicle }) {
     }
   };
 
-  const onPaymentSuccess = (paymentId:string) => {
+  const onPaymentSuccess = async (paymentId: string) => {
     try {
-        // save booking details
-        // redirect to user bookings page
+      // save booking details
+      const { success } = await saveNewBooking({
+        vehicle: vehicle?._id,
+        user: loggedinUserData?._id,
+        fromDateAndTime,
+        toDateAndTime,
+        totalAmount,
+        paymentId,
+        totalHours,
+        status: "booked",
+      });
+
+      if (success) {
+        message.success("Booking successful");
+        router.push("/user/bookings");
+      } else {
+        message.error("Booking failed");
+      }
+      // redirect to user bookings page
     } catch (error: any) {
       message.error(error.message);
-        
     }
-  }
+  };
 
   const onClear = () => {
     setFromDateAndTime("");

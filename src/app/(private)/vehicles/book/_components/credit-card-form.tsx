@@ -24,7 +24,7 @@ function CreditCardForm({
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     try {
-        setLoading(true);
+      setLoading(true);
       event.preventDefault();
 
       if (!stripe || !elements) {
@@ -48,8 +48,8 @@ function CreditCardForm({
     } catch (error: any) {
       message.error(error.message);
     } finally {
-        setLoading(false);
-        }
+      setLoading(false);
+    }
   };
 
   return (
@@ -70,10 +70,9 @@ function CreditCardForm({
         />
         <div className="flex justify-end gap-5 mt-5">
           <Button>Cancel</Button>
-          <Button type="primary"
-          htmlType="submit"
-          loading={loading}
-          >Submit Payment</Button>
+          <Button type="primary" htmlType="submit" loading={loading}>
+            Submit Payment
+          </Button>
         </div>
       </form>
     </Modal>
