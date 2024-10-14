@@ -53,6 +53,7 @@ function VehicleInfo({ vehicle }: { vehicle: IVehicle }) {
       if (success) {
         setIsAvailable(true);
       } else {
+        message.error("Vehicle is not available for the selected time");
         setIsAvailable(false);
       }
     } catch (error: any) {
