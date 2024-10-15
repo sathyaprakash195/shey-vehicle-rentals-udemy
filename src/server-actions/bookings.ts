@@ -3,7 +3,10 @@
 import { IBooking } from "@/interfaces";
 import BookingModel from "@/models/booking-model";
 import VehicleModel from "@/models/vehicle-model";
-
+import { getCurrentUserDataFromMongoDB } from "./users";
+import { revalidatePath } from "next/cache";
+import { sendBookingConfirmationEmail, sendEmail } from "./mails";
+const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY);
 export const checkVehicleAvailabilty = async ({
   fromDateAndTime,
   toDateAndTime,
@@ -18,6 +21,7 @@ export const checkVehicleAvailabilty = async ({
 
     const bookings = await BookingModel.find({
       vehicle: vehicleId,
+      status: { $ne: "cancelled" },
       $or: [
         { fromDateAndTime: { $gte: fromDateAndTime, $lt: toDateAndTime } },
         {
@@ -50,15 +54,76 @@ export const checkVehicleAvailabilty = async ({
 
 export const saveNewBooking = async (payload: Partial<IBooking>) => {
   try {
-    const booking = await BookingModel.create(payload);
+    const booking: any = await BookingModel.create(payload);
 
     await VehicleModel.findByIdAndUpdate(payload.vehicle, {
       status: "in-ride",
     });
 
+    const bookingDoc:any = await BookingModel.findById(booking._id).populate('vehicle');
+
+    sendBookingConfirmationEmail(bookingDoc);
+
     return {
       success: true,
       data: JSON.parse(JSON.stringify(booking)),
+    };
+  } catch (error: any) {
+    return {
+      success: false,
+      message: error.message,
+    };
+  }
+};
+
+export const getLoggedInUserBookings = async () => {
+  try {
+    const loggedinUserResponse = await getCurrentUserDataFromMongoDB();
+
+    if (!loggedinUserResponse.success) {
+      return {
+        success: false,
+        message: loggedinUserResponse.message,
+      };
+    }
+
+    const userBookings = await BookingModel.find({
+      user: loggedinUserResponse.data._id,
+    })
+      .populate("vehicle")
+      .sort({ createdAt: -1 });
+    return {
+      success: true,
+      data: JSON.parse(JSON.stringify(userBookings)),
+    };
+  } catch (error: any) {
+    return {
+      success: false,
+      message: error.message,
+    };
+  }
+};
+
+export const cancelBooking = async ({
+  bookingId = "",
+  paymentId = "",
+}: {
+  bookingId: string;
+  paymentId?: string;
+}) => {
+  try {
+    await BookingModel.findByIdAndUpdate(bookingId, {
+      status: "cancelled",
+    });
+
+    // issue refund to customer based on company policy
+    const refund = await stripe.refunds.create({
+      payment_intent: paymentId,
+    });
+    revalidatePath("/user/bookings");
+    return {
+      success: true,
+      data: JSON.parse(JSON.stringify(refund)),
     };
   } catch (error: any) {
     return {

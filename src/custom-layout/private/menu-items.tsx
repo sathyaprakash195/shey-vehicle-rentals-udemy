@@ -18,7 +18,7 @@ interface IMenuItems {
   setShowMenuItems: (value: boolean) => void;
 }
 
-function MenuItems({ loggedinUserData , setShowMenuItems }: IMenuItems) {
+function MenuItems({ loggedinUserData, setShowMenuItems }: IMenuItems) {
   const iconSize = 16;
   const pathname = usePathname();
   const router = useRouter();
@@ -79,7 +79,7 @@ function MenuItems({ loggedinUserData , setShowMenuItems }: IMenuItems) {
       icon: <Car size={iconSize} />,
     },
     {
-      name: "Bookings",
+      name: "My Bookings",
       path: "/user/bookings",
       icon: <Calendar size={iconSize} />,
     },
@@ -87,6 +87,11 @@ function MenuItems({ loggedinUserData , setShowMenuItems }: IMenuItems) {
       name: "Profile",
       path: "/user/profile",
       icon: <Contact size={iconSize} />,
+    },
+    {
+      name: "Wallet",
+      path: "/user/wallet",
+      icon: <DollarSign size={iconSize} />,
     },
     {
       name: "Settings",

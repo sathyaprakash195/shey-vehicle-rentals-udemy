@@ -6,7 +6,7 @@ import React from "react";
 import VehiclesTable from "./_components/vehicles-table";
 
 async function VehiclesListPage() {
-  const { success, data } = await getAllVehicles();
+  const { success, data } = await getAllVehicles({});
   if (!success) {
     return <Alert message="Failed to fetch vehicles" type="error" />;
   }
