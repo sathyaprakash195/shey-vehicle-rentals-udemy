@@ -27,10 +27,18 @@ const statusOptions = [
 function AdminBookingsTable({ bookings }: { bookings: IBooking[] }) {
   const [loading, setLoading] = React.useState(false);
 
-  const updateStatusHandler = async (status: string, bookingId: string) => {
+  const updateStatusHandler = async (
+    status: string,
+    bookingId: string,
+    vehicleId: string
+  ) => {
     try {
       setLoading(true);
-      const { success } = await updateBookingStatus({ status, bookingId });
+      const { success } = await updateBookingStatus({
+        status,
+        bookingId,
+        vehicleId,
+      });
       if (success) {
         message.success("Booking status updated successfully");
       } else {
@@ -90,7 +98,13 @@ function AdminBookingsTable({ bookings }: { bookings: IBooking[] }) {
           <select
             value={text}
             className="border border-gray-500 rounded-sm p-1"
-            onChange={(e) => updateStatusHandler(e.target.value, record._id)}
+            onChange={(e) =>
+              updateStatusHandler(
+                e.target.value,
+                record._id,
+                typeof record.vehicle === "object" ? record.vehicle._id : ""
+              )
+            }
           >
             {statusOptions.map((option) => (
               <option key={option.value} value={option.value}>

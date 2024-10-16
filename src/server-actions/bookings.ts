@@ -56,10 +56,6 @@ export const saveNewBooking = async (payload: Partial<IBooking>) => {
   try {
     const booking: any = await BookingModel.create(payload);
 
-    await VehicleModel.findByIdAndUpdate(payload.vehicle, {
-      status: "in-ride",
-    });
-
     const bookingDoc: any = await BookingModel.findById(booking._id).populate(
       "vehicle"
     );
@@ -178,15 +174,28 @@ export const getAllBookings = async ({
 
 export const updateBookingStatus = async ({
   bookingId,
+  vehicleId,
   status,
 }: {
   bookingId: string;
   status: string;
+  vehicleId: string;
 }) => {
   try {
     await BookingModel.findByIdAndUpdate(bookingId, {
       status,
     });
+
+    let vehicleStatus = "available";
+
+    if (status === "inride") {
+      vehicleStatus = "in-ride";
+    }
+
+    await VehicleModel.findByIdAndUpdate(vehicleId, {
+      status: vehicleStatus,
+    });
+
     revalidatePath("/admin/bookings");
     return {
       success: true,
