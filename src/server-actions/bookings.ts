@@ -60,7 +60,9 @@ export const saveNewBooking = async (payload: Partial<IBooking>) => {
       status: "in-ride",
     });
 
-    const bookingDoc:any = await BookingModel.findById(booking._id).populate('vehicle');
+    const bookingDoc: any = await BookingModel.findById(booking._id).populate(
+      "vehicle"
+    );
 
     sendBookingConfirmationEmail(bookingDoc);
 
@@ -124,6 +126,70 @@ export const cancelBooking = async ({
     return {
       success: true,
       data: JSON.parse(JSON.stringify(refund)),
+    };
+  } catch (error: any) {
+    return {
+      success: false,
+      message: error.message,
+    };
+  }
+};
+
+export const getAllBookings = async ({
+  fromDateAndTime = "",
+  toDateAndTime = "",
+  status = "",
+}: {
+  fromDateAndTime?: string;
+  toDateAndTime?: string;
+  status?: string;
+}) => {
+  try {
+    let query = {};
+    if (fromDateAndTime && toDateAndTime) {
+      query = {
+        fromDateAndTime: { $gte: fromDateAndTime, $lt: toDateAndTime },
+      };
+    }
+
+    if (status && status !== "all") {
+      query = {
+        ...query,
+        status,
+      };
+    }
+
+    const bookings = await BookingModel.find(query)
+      .populate("vehicle")
+      .populate("user")
+      .sort({ createdAt: -1 });
+
+    return {
+      success: true,
+      data: JSON.parse(JSON.stringify(bookings)),
+    };
+  } catch (error: any) {
+    return {
+      success: false,
+      message: error.message,
+    };
+  }
+};
+
+export const updateBookingStatus = async ({
+  bookingId,
+  status,
+}: {
+  bookingId: string;
+  status: string;
+}) => {
+  try {
+    await BookingModel.findByIdAndUpdate(bookingId, {
+      status,
+    });
+    revalidatePath("/admin/bookings");
+    return {
+      success: true,
     };
   } catch (error: any) {
     return {
