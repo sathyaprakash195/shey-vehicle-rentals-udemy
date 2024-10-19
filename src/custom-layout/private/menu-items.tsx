@@ -4,11 +4,13 @@ import { Button, message } from "antd";
 import {
   Calendar,
   Car,
+  ChartBar,
   Contact,
   DollarSign,
   List,
   LogOut,
   Settings,
+  Wallet,
 } from "lucide-react";
 import { usePathname, useRouter } from "next/navigation";
 import React from "react";
@@ -63,7 +65,7 @@ function MenuItems({ loggedinUserData, setShowMenuItems }: IMenuItems) {
     {
       name: "Reports",
       path: "/admin/reports",
-      icon: <DollarSign size={iconSize} />,
+      icon: <ChartBar size={iconSize} />,
     },
     {
       name: "Settings",
@@ -91,12 +93,17 @@ function MenuItems({ loggedinUserData, setShowMenuItems }: IMenuItems) {
     {
       name: "Wallet",
       path: "/user/wallet",
-      icon: <DollarSign size={iconSize} />,
+      icon: <Wallet size={iconSize} />,
     },
     {
       name: "Settings",
       path: "/user/settings",
       icon: <Settings size={iconSize} />,
+    },
+    {
+      name: "Reports",
+      path: "/user/reports",
+      icon: <ChartBar size={iconSize} />,
     },
   ];
 

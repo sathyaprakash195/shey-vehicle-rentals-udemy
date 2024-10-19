@@ -2,6 +2,8 @@
 
 import BookingModel from "@/models/booking-model";
 import VehicleModel from "@/models/vehicle-model";
+import { getCurrentUserDataFromMongoDB } from "./users";
+import mongoose from "mongoose";
 
 export const getBookingReports = async () => {
   try {
@@ -87,6 +89,80 @@ export const getVehicleReports = async () => {
       },
     };
   } catch (error: any) {
+    return {
+      success: false,
+      message: error.message,
+    };
+  }
+};
+
+export const getLoggedInUserBookingReports = async () => {
+  try {
+    const loggedinUser = await getCurrentUserDataFromMongoDB();
+    const userId = new mongoose.Types.ObjectId(loggedinUser.data._id);
+    const [
+      totalBookingsCount,
+      totalBookingsRevenue,
+      cancelledBookingsCount,
+      cancelledBookingsRevenue,
+    ] = await Promise.all([
+      BookingModel.countDocuments({ user: userId }),
+      BookingModel.aggregate([
+        {
+          $match: {
+            user: userId,
+          },
+        },
+        {
+          $group: {
+            _id: null,
+            totalRevenue: {
+              $sum: "$totalAmount",
+            },
+          },
+        },
+      ]),
+      BookingModel.countDocuments({ status: "cancelled", user: userId }),
+      BookingModel.aggregate([
+        {
+          $match: {
+            status: "cancelled",
+            user: userId,
+          },
+        },
+        {
+          $group: {
+            _id: null,
+            totalRevenue: {
+              $sum: "$totalAmount",
+            },
+          },
+        },
+      ]),
+    ]);
+
+    let totalBookingsRevenueTemp = 0;
+    if (totalBookingsRevenue.length > 0) {
+      totalBookingsRevenueTemp = totalBookingsRevenue[0].totalRevenue;
+    }
+
+    let cancelledBookingsRevenueTemp = 0;
+    if (cancelledBookingsRevenue.length > 0) {
+      cancelledBookingsRevenueTemp = cancelledBookingsRevenue[0].totalRevenue;
+    }
+
+    return {
+      success: true,
+      data: {
+        totalBookingsCount,
+        totalBookingsRevenue: totalBookingsRevenueTemp,
+        cancelledBookingsCount,
+        cancelledBookingsRevenue: cancelledBookingsRevenueTemp,
+        netRevenue: totalBookingsRevenueTemp - cancelledBookingsRevenueTemp,
+      },
+    };
+  } catch (error: any) {
+    console.log(error);
     return {
       success: false,
       message: error.message,

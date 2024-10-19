@@ -1,7 +1,7 @@
 import { IUser } from "@/interfaces";
 import { getCurrentUserDataFromMongoDB } from "@/server-actions/users";
 import { Alert, Drawer, message } from "antd";
-import { Menu } from "lucide-react";
+import { Gem, Menu } from "lucide-react";
 import React, { useEffect } from "react";
 import MenuItems from "./menu-items";
 import { IUsersGlobalStore, usersGlobalStore } from "@/store/users-store";
@@ -56,8 +56,13 @@ function PrivateLayout({ children }: { children: React.ReactNode }) {
           className="h-14 w-20 cursor-pointer"
           onClick={() => router.push("/vehicles")}
         />
-        <div className="flex gap-5 text-white text-sm">
-          <span>{loggedinUserData?.name}</span>
+        <div className="flex gap-5 text-white text-sm items-center">
+          <div className="flex items-center gap-2">
+            {loggedinUserData?.isAdmin && (
+              <Gem size={16} className="text-blue-500" />
+            )}
+            <span>{loggedinUserData?.name}</span>
+          </div>
 
           <Menu
             size={16}

@@ -40,3 +40,32 @@ export const getCurrentUserDataFromMongoDB = async () => {
     };
   }
 };
+
+export const getAllUsers = async () => {
+  try {
+    const users = await UserModel.find().sort({ createdAt: -1 });
+    return {
+      success: true,
+      data: JSON.parse(JSON.stringify(users)),
+    };
+  } catch (error: any) {
+    return {
+      success: false,
+      message: error.message,
+    };
+  }
+};
+
+export const updateUserRole = async (userId: string, role: string) => {
+  try {
+    await UserModel.findByIdAndUpdate(userId, { isAdmin: role === "admin" });
+    return {
+      success: true,
+    };
+  } catch (error: any) {
+    return {
+      success: false,
+      message: error.message,
+    };
+  }
+};
